@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Covid cases Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        *{
+            margin:0;
+            padding:0;
+        }
+        body{
+            display:flex;
+            justify-content: center;
+            align-items: center;
+            height:100vh; 
+            width: 100%;
+            background: #000;
+        }
+        .container{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin: 0;
+        }
+        .searchbox{
+            position: relative;
+            background-color: #fff;
+            height:40px;
+            border-radius: 40px;
+            padding: 10px;
+            margin-bottom: 30px;    
+            text-shadow:0 0 10px #00b3ff,
+                        0 0 10px #00b3ff,
+                        0 0 10px #00b3ff,
+                        0 0 10px #00b3ff,
+                        0 0 10px #00b3ff;
+        }
+        .searchbox:hover > .searchtxt{
+            width: 240px;
+            text-align: center;
+            color:#00b3ff;
+            font-size: 20px;
+            padding:0 6px;
+        }
+        .searchbtn{
+            color:#fff;
+            float:right;
+            width: 40px;
+            height:40px;
+            border-radius: 50%;
+            background:#2f3640;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .searchtxt{
+            border: none;
+            background: none;
+            outline: none;
+            float: left;
+            padding: 0;
+            color: #000;
+            font-size: 16px;
+            transition: 0.4s;
+            line-height: 40px;
+            width: 0px;
+        }
+        h1{
+            font-family:'Roboto',sans-serif;
+            font-size: 40px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color:#56d8f5;
+            justify-content:center;
+            align-items: center;
+        }
+        h1 img{
+            height:50px;
+            width:100px;
+        }
+        .content{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            flex-wrap: wrap;
+
+        }
+        .box{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100px;
+            width: 25%;
+            margin: 20px;
+            background:rgba(255,255,255,0.2);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            border:1px solid rgba(255,255,255,0.25);
+            border-left: 1px solid rgba(255,255,255,0.5);
+            border-top: 1px solid rgba(255,255,255,0.5);
+        }
+        .box .sub-title, .data{
+            font-family: 'Roboto',sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            line-height: 1.87;
+            letter-spacing: 2px;
+            justify-content: center;
+            align-items: center;
+
+        }
+        .data{
+            color:#fff;
+
+        }
+        .death{
+            color: red;
+        }
+        .total{
+            color:lightsalmon;
+        }
+        .recovered{
+            color:rgba(21,231,21);
+        }
+        .test{
+            color:rgba(0,255,85);
+        }
+        .active{
+            color:rgba(255,230,0);
+        }
+        .critical{
+            color: rgba(194,160,8);
+        }
+        #flag{
+            display: none;
+
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="searchbox">
+            <input type="text" id="mytext" class="searchtxt" placeholder="Type to search">
+            <a href="#" class="searchbtn" onclick="getInputValue();">
+                <i class="fa fa-search" aria-hidden="true"></i>
+            </a>
+        </div>
+        <h1>Covid 19 Cases In <span id="country"></span><img src="" alt="country" id="flag"></h1>
+        <div class="content">
+            <div class="box">
+                <div class="sub-title active">Active Cases</div>
+                <div class="data" id="active_cases">
+                    
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="sub-title total">TotalCases</div>
+                <div class="data" id="total_cases"></div>
+            </div>
+
+            <div class="box">
+                <div class="sub-title critical">Critical Cases</div>
+                <div class="data" id="critical_cases"></div>
+            </div>
+
+            <div class="box">
+                <div class="sub-title death">Total Deaths</div>
+                <div class="data" id="total_death"></div>
+            </div>
+
+            <div class="box">
+                <div class="sub-title recovered">Recovered Cases</div>
+                <div class="data" id="recovered_cases"></div>
+            </div>
+
+
+            <div class="box">
+                <div class="sub-title test">Total Test Done</div>
+                <div class="data" id="total_test_done"></div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>
+<script>
+    function getInputValue(){
+        var inputValue=document.getElementById("mytext").value;
+        var image=document.getElementById('flag')
+        image.style.display="inline-block";
+        fetch("https://corona.lmao.ninja/v2/countries/"+inputValue).then(
+        (response)=>{
+            return response.json()
+        }).then((data)=>{
+            console.log(data);
+            document.getElementById("flag").src=data.countryInfo.flag;
+            document.getElementById("country").innerHTML=data.country;
+            document.getElementById("active_cases").innerHTML=data.active;
+            document.getElementById("total_cases").innerHTML=data.cases;
+            document.getElementById("critical_cases").innerHTML=data.critical;
+            document.getElementById("total_death").innerHTML=data.deaths;
+            document.getElementById("recovered_cases").innerHTML=data.recovered;
+            document.getElementById("total_test_done").innerHTML=data.tests;
+        });
+    }
+</script>
